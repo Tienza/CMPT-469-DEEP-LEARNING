@@ -1,0 +1,33 @@
+import pandas as pd                                                                
+                                                                                   
+dateparse = lambda x: pd.datetime.strptime(x, '%m/%d/%Y')                          
+sp = pd.read_csv('all_stocks_5yr.txt', parse_dates=['Date'], date_parser=dateparse)
+stck = sp[sp['Name']=='GOOG']                                                      
+                                                                                   
+# for headlines dataset                                                            
+nws = pd.read_csv('Combined_News_DJIA.csv', parse_dates=['Date'], date_parser=dateparse)
+                                                                                   
+# output file                                                                      
+text_file = open("dataset.csv", "w")                                               
+                                                                                   
+for index, row in nws.iterrows():                                                  
+  theDate = row['Date']                                                            
+  print str(theDate)                                                               
+  stckbydt = stck[stck['Date']==theDate]                                           
+  if not stckbydt.empty:                                                           
+    clsprc = stckbydt['Close']                                                     
+    # for all top 25 news                                                          
+    for x in range(25):                                                            
+      idx = x+1                                                                    
+      col = 'Top' + str(idx)                                                       
+      # print col                                                                  
+      nhl = row[col]                                                               
+      nhl = nhl.replace('\n', '')                                                  
+      print nhl                                                                    
+      print clsprc                                                                 
+      text_file.write(str(theDate) + ",")                                          
+      text_file.write("".join(list(nhl)) + ",")                                    
+      text_file.write(str(list(clsprc)[0]) + "\n")                                 
+                                                                                   
+                                                                                   
+text_file.close() 
