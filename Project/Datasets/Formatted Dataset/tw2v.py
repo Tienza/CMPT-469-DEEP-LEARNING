@@ -39,6 +39,11 @@ for w in h1.split(" "):
     filtered = "".join(filtered)
     if len(filtered) > 0 :
         try:
+            date_info_array = [0] * 200
+            dateString = x['Date'][0]
+            date_info_array[0] = int(dateString[2] + dateString[3])
+            date_info_array[1] = x['Month'][0]
+            date_info_array[2] = x['Weekday'][0]
             wa.append(model[filtered])
         except:
             pass
