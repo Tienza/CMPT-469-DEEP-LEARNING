@@ -39,7 +39,6 @@ for w in h1.split(" "):
     filtered = "".join(filtered)
     if len(filtered) > 0 :
         try:
-            print(filtered)
             wa.append(model[filtered])
         except:
             pass
@@ -58,6 +57,8 @@ print(pwa.shape)
 n = average # minimum or average size of 
 pca_n = TruncatedSVD(n_components=n, algorithm='arpack')
 pca_result_n = pca_n.fit_transform(pwa)
+pca_result_n = pca_result_n.flatten()
+print('Array Flattened')
 print('Explained variation per principal component (PCA): {}'.format(np.sum(pca_n.explained_variance_ratio_)))
 
 print(pca_result_n)
