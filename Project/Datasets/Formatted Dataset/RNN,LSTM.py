@@ -98,16 +98,28 @@ pred = tf.matmul(output, weights['out']) + biases['out']
 cost = tf.reduce_mean(tf.losses.mean_squared_error(
     labels = y,
     predictions = pred,
-    weights=1.0,
-    scope=None,
-    loss_collection=tf.GraphKeys.LOSSES,
+    weights = 1.0,
+    scope = None,
+    loss_collection = tf.GraphKeys.LOSSES,
     reduction=tf.losses.Reduction.SUM_BY_NONZERO_WEIGHTS
 ))
 #cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y, logits = pred ))
 optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(cost)
 
-correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+correct_pred = tf.metrics.mean_absolute_error(
+    labels = y,
+    predictions = pred,
+    weights = None,
+    metrics_collections = None,
+    updates_collections = None,
+    name = None
+)
+
+'''accuracy = tf.reduce_mean(tf.metrics.mean_absolute_error(
+    labels = y,
+    predictions = pred))'''
+#correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+#accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 init = tf.global_variables_initializer()
 
@@ -129,21 +141,28 @@ with tf.Session() as sess:
         sess.run(optimizer, feed_dict={x: batch_x, y: batch_y})
 
         if step % display_step == 0:
-            # Calculate batch accuracy
-            acc = sess.run(accuracy, feed_dict={x: batch_x, y: batch_y})
             # Calculate batch loss
             loss = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
             print("**************************************************************")
-            print("Iter " + str(step * batch_size) + ", Minibatch Loss= " + \
-                  "{:.6f}".format(loss) + ", Training Accuracy= " + \
-                  "{:.5f}".format(acc))
+            print("Iter " + str(step * batch_size) + ", Minibatch Loss = " + \
+                  "{:.6f}".format(loss))
+            print("**************************************************************")
         step += 1
     print("Optimization Finished!")
 
-# Calculate accuracy for the testing data
-#test_len = len(rand_index)
-test_data = testImages.reshape((-1, n_steps, n_input))
-test_label = testLabels
-print("Testing Accuracy:", sess.run(accuracy, feed_dict={x: test_data, y: test_label}))
+    # Calculate accuracy for the testing data
+    # test_len = len(rand_index)
+    test_data = testImages.reshape((-1, n_steps, n_input))
+    test_label = testLabels
+    # Calculate batch loss
+    loss = sess.run(cost, feed_dict={x: test_data, y: test_label})
+    print("**************************************************************")
+    print("Iter " + str(step * batch_size) + ", Testing Batch Loss = " + \
+          "{:.6f}".format(loss))
+    print("**************************************************************")
+
+    tarY, predY = sess.run(y, pred, feed_dict={x: test_data, y: test_label})
+    print(tarY)
+    print(predY)
 
 sess.close()
