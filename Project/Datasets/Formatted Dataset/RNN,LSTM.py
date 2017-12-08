@@ -12,10 +12,10 @@ def next_batch_train(num, data, labels):
     data_shuffle = [data[i] for i in idx]
     labels_shuffle = [labels[i] for i in idx]
 
-    print(np.shape(data_shuffle))
-    print(np.shape(labels_shuffle))
-    print(np.shape(np.array(data_shuffle)))
-    print(np.shape(np.array(labels_shuffle)))
+    #print(np.shape(data_shuffle))
+    #print(np.shape(labels_shuffle))
+    #print(np.shape(np.array(data_shuffle)))
+    #print(np.shape(np.array(labels_shuffle)))
 
     # Remove the num from the original lists
     trainImages = trainImages[num:]
@@ -34,10 +34,10 @@ def next_batch_test(num, data, labels):
     data_shuffle = [data[i] for i in idx]
     labels_shuffle = [labels[i] for i in idx]
 
-    print(np.shape(data_shuffle))
-    print(np.shape(labels_shuffle))
-    print(np.shape(np.array(data_shuffle)))
-    print(np.shape(np.array(labels_shuffle)))
+    #print(np.shape(data_shuffle))
+    #print(np.shape(labels_shuffle))
+    #print(np.shape(np.array(data_shuffle)))
+    #print(np.shape(np.array(labels_shuffle)))
 
     # Remove the num from the original lists
     test_data = test_data[num:]
@@ -85,11 +85,11 @@ print ("Test Labels:  ", testLabels.shape)
 
 n_input = 200 # MNIST data input (img shape: 28*28)
 n_steps = 491 # timesteps
-n_hidden = 128 # hidden layer num of features
+n_hidden = 512 # hidden layer num of features
 n_classes = 1 # MNIST total classes (0-9 digits)
 
 
-learning_rate = 0.001
+learning_rate = 0.01
 training_iters = 19975
 batch_size = 25
 display_step = 1
@@ -170,14 +170,14 @@ with tf.Session() as sess:
             loss = sess.run(cost, feed_dict={x: batch_x, y: batch_y})
             print("**************************************************************")
             print("Iter " + str(step * batch_size) + ", Minibatch Loss = " + "{:.6f}".format(loss))
-            print("**************************************************************")
         step += 1
     print("Optimization Finished!")
 
     # Calculate accuracy for the testing data
     res = []
     step = 0
-    while step < 4425:
+    #while step < 4425:
+    for i in range(len(test_label)):
         batch_x, batch_y = next_batch_test(1, test_data, test_label)
         tarY, predY = sess.run([y, pred], feed_dict={x: batch_x, y: batch_y})
         # Convert to np arrays
